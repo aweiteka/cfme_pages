@@ -124,3 +124,6 @@ class HeaderMenu(Page):
                 elif "Automate" in menu_name:
                     from pages.automate import Automate
                     return Automate.ImportExport(self.testsetup)
+            elif "Configuration" in my_name:
+                from pages.configuration import Configuration
+                return Configuration.Configuration(self.testsetup)
