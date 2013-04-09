@@ -47,4 +47,6 @@ class Tree(Page):
         
     def is_displayed(self):
         return self._root_element.is_displayed()
-    
+
+    def click(self):
+        return self._root_element.click()
