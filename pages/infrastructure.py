@@ -397,16 +397,19 @@ class Infrastructure(Base):
             self._wait_for_visible_element(*self._pxe_uri_locator)
             return Infrastructure.PXE(self.testsetup)
 
-        def new_pxe_server_fill_data(
-                                     self,
+        def new_pxe_server_fill_data(self, 
                                      name="pxe_server",
                                      uri="127.0.0.1/var/www/html/pub/miq/ipxe/",
                                      access_url="http://127.0.0.1/ipxe",
                                      pxe_dir="pxe",
                                      windows_img_dir="sources/microsoft",
                                      customization_dir="customization",
-                                     pxe_img_menus_filename="menu.php"
+                                     pxe_img_menus_filename="menu.php",
+                                     **kwargs
                                      ):
+            for key in ("name", "uri", "access_url", "pxe_dir", "windows_img_dir", "customization_dir", "pxe_img_menus_filename"):
+                if key in kwargs:
+                    setattr(self, key, kwargs[key])
             #name
             self.selenium.find_element(*self._pxe_name_locator).send_keys(name)
             #uri
