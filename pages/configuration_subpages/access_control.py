@@ -156,25 +156,16 @@ class AccessControl(Base):
         _delete_group_button = (By.CSS_SELECTOR, "a[title='Delete this Group']")
         _group_name_label = (By.CSS_SELECTOR, ".style1 tr:nth-child(1) td:nth-child(2)")
         _edit_tags_button = (By.CSS_SELECTOR, "li#tag > a")
-        _details_locator = (By.CSS_SELECTOR, "div#main_div")
-
-        @property
-        def details(self):
-            from pages.regions.details import Details
-            root_element = self.selenium.find_element(*self._details_locator)
-            return Details(self.testsetup, root_element)
-
-        @property
-        def description(self):
-            return self.details.get_section("Group Information").get_item("Description").value
+        _role_locator = (By.CSS_SELECTOR, "tr[title='View this Role']")
 
         @property
         def role(self):
-            return self.details.get_section("Group Information").get_item("Role").value
+            return self.selenium.find_element(*self._role_locator)
 
-        @property
-        def users(self):
-            return self.details.get_section("Group Information").get_item("Users in this Group").value
+        def click_on_role(self):
+            self.role.click()
+            self._wait_for_results_refresh()
+            return AccessControl.ShowRole(self.testsetup)
 
         def click_on_edit(self):
             self.selenium.find_element(*self._edit_group_button).click()
