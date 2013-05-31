@@ -88,31 +88,23 @@ class AccessControl(Base):
             return CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree))
 
         def rbac_tree(self, node):
-            """Repackage product_features tree so it's available when loading
+            """Repackage product_features tree so it's available after loading
                another page
             """
             checkbox_tree = CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree)).find_node_by_name(node)
 
-            #class Object(object):
-            #    pass
-
-            #obj = Object()
-            #obj.children = Object()
-            #obj.grandchildren = Object()
             tree = list()
             checkbox_tree.twisty.expand()
             for child in checkbox_tree.children:
+                child.twisty.expand()
                 tree.append({"name" : child.name, 
                                "checked" : child.is_checked, 
                                "checked_dim" : child.is_checked_dim, 
-                               "children" : list() })
-                child.twisty.expand()
-                for gc in child.children:
-                    tree[child.name]["children"].append({"name" : gc.name, 
-                               "checked" : gc.is_checked, 
-                               "checked_dim" : gc.is_checked_dim})
+                               "children" : [{ "name" : gc.name, 
+                                    "checked" : gc.is_checked, 
+                                    "checked_dim" : gc.is_checked_dim } \
+                                        for gc in child.children] })
             return tree
-            #return [{"name" : child.name, "checked" : child.is_checked, "checked_dim" : child.is_checked_dim, "child" : { "name" : gc.name, "checked" : gc.is_checked, "checked_dim" : gc.is_checked_dim}} for child in checkbox_tree.children for gc in child.children.expand()]
 
     # GROUPS
     def click_on_groups(self):
