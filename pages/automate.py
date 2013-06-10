@@ -188,3 +188,23 @@ class Automate(Base):
             self._wait_for_results_refresh()
             self.selenium.find_element(*self._add_new_field_schema_button).click()
             return Automate.Explorer(self.testsetup)
+
+
+    class Simulation(Base):
+
+        _page_title = 'CloudForms Management Engine: Automate'
+
+
+    class Customization(Base):
+
+        _page_title = 'CloudForms Management Engine: Automate'
+
+
+    class Log(Base):
+
+        _page_title = 'CloudForms Management Engine: Automate'
+
+    class Requests(Base):
+
+        _page_title = 'CloudForms Management Engine: Requests'
+

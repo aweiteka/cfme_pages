@@ -14,8 +14,11 @@ class Infrastructure(Base):
         return {"management_system" : ManagementSystems,
                 "ems_cluster"       : Infrastructure.Clusters,
                 "host"              : Infrastructure.Hosts,
+                "resource_pool"     : Infrastructure.ResourcePools,
                 "storage"           : Infrastructure.Datastores,
-                "pxe"               : Infrastructure.PXE
+                "repository"        : Infrastructure.Respositories,
+                "pxe"               : Infrastructure.PXE,
+                "miq_request_host"  : Infrastructure.Requests
                 }
 
     class Clusters(Base, PolicyMenu):
@@ -380,4 +383,16 @@ class Infrastructure(Base):
             self.selenium.find_element(*self._add_button_locator).click()
             self._wait_for_results_refresh()
             return Infrastructure.PXEAdded(self.testsetup)
+
+    class ResourcePools(Base):
+
+        _page_title = 'CloudForms Management Engine: Resource Pools'
+
+    class Respositories(Base):
+
+        _page_title = 'CloudForms Management Engine: Respositories'
+
+    class Requests(Base):
+
+        _page_title = 'CloudForms Management Engine: Requests'
 

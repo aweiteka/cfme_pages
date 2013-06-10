@@ -14,7 +14,7 @@ class Services(Base):
     @property
     def submenus(self):
         return {"services"       : Services.MyServices,
-                "catalogs"       : None,
+                "catalogs"       : Services.Catalogs,
                 "miq_request_vm" : Service.Requests,
                 "vmx"            : Services.VirtualMachines,
                 }
@@ -27,6 +27,10 @@ class Services(Base):
     class MyServices(Base, PaginatorMixin):
 
         _page_title = 'CloudForms Management Engine: My Services'
+
+    class Catalogs(Base):
+
+        _page_title = 'CloudForms Management Engine: Catalogs'
 
     class Requests(Base, PaginatorMixin):
 

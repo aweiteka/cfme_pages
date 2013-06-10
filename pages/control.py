@@ -10,7 +10,9 @@ class Control(Base):
     @property
     def submenus(self):
         return {"miq_policy": Control.Explorer,
-                "miq_policy_export": Control.ImportExport
+                "miq_policy_rsop": Control.Simulation,
+                "miq_policy_export": Control.ImportExport,
+                "miq_policy_logs": Control.Log
                 }
 
     class Explorer(Base):
@@ -151,3 +153,12 @@ class Control(Base):
         def import_policies(self, import_policy_file):
             self.selenium.find_element(*self._policy_import_field).send_keys(import_policy_file)
             return self.click_on_upload()
+
+    class Simulation(Base):
+
+        _page_title = 'CloudForms Management Engine: Policy Simulation'
+
+    class Log(Base):
+
+        _page_title = 'CloudForms Management Engine: Control'
+
