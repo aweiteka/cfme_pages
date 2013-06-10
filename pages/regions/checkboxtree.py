@@ -16,6 +16,7 @@ class CheckboxTree(Tree):
     '''
 
     _checkbox_locator = (By.CSS_SELECTOR, "tr > td:nth-child(2) > img")
+    _node_icon_locator = (By.CSS_SELECTOR, "tr > td:nth-child(3) > img")
 
     def check(self):
         if self.is_checked:
@@ -47,3 +48,11 @@ class CheckboxTree(Tree):
     @property
     def _checkbox_img(self):
         return self._checkbox.get_attribute('src')
+
+    @property
+    def _node_icon(self):
+        return self._root_element.find_element(*self._node_icon_locator)
+
+    @property
+    def node_icon_img(self):
+        return self._node_icon.get_attribute('src')

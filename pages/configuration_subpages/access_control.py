@@ -87,24 +87,21 @@ class AccessControl(Base):
         def product_features(self):
             return CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree))
 
-        def rbac_tree(self, node):
+        def traverse_rbac_tree(self, parent=None, depth=3):
             """Repackage product_features tree so it's available after loading
                another page
             """
-            checkbox_tree = CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree)).find_node_by_name(node)
-
-            tree = list()
-            checkbox_tree.twisty.expand()
-            for child in checkbox_tree.children:
-                child.twisty.expand()
-                tree.append({"name" : child.name, 
-                               "checked" : child.is_checked, 
-                               "checked_dim" : child.is_checked_dim, 
-                               "children" : [{ "name" : gc.name, 
-                                    "checked" : gc.is_checked, 
-                                    "checked_dim" : gc.is_checked_dim } \
-                                        for gc in child.children] })
-            return tree
+            if parent is None:
+                parent = CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree)).find_node_by_name("Everything")
+            else:
+                parent.twisty.expand()
+        
+            rbac_node = RBAC_Node(name=parent.name, is_checked=parent.is_checked, is_checked_dim=parent.is_checked_dim, icon=parent.node_icon_img)
+            if depth > 0:
+                for child in parent.children:
+                    rbac_node.children.append(self.traverse_rbac_tree(parent=child, depth=depth-1))
+     
+            return rbac_node
 
     # GROUPS
     def click_on_groups(self):
@@ -218,3 +215,11 @@ class AccessControl(Base):
         @property
         def reset(self):
             return self.reset_tag_edits
+
+# helper class to traverse product features (RBAC) tree
+class RBAC_Node(object):
+    def __init__(self, *args, **kwargs):
+        self.children = list()
+        for k,v in kwargs.items():
+            setattr(self, k, v)
+
