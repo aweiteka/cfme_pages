@@ -26,11 +26,17 @@ class Services(Base):
 
     class MyServices(Base, PaginatorMixin):
 
-        _page_title = 'CloudForms Management Engine: My Services'
+        _page_title = 'CloudForms Management Engine: Services'
 
     class Catalogs(Base):
 
         _page_title = 'CloudForms Management Engine: Catalogs'
+
+        @property
+        def accordion(self):
+            from pages.regions.accordion import Accordion
+            from pages.regions.treeaccordionitem import TreeAccordionItem
+            return Accordion(self.testsetup,TreeAccordionItem)
 
     class Requests(Base, PaginatorMixin):
 

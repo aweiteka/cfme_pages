@@ -390,7 +390,7 @@ class Infrastructure(Base):
 
     class Respositories(Base):
 
-        _page_title = 'CloudForms Management Engine: Respositories'
+        _page_title = 'CloudForms Management Engine: Repositories'
 
     class Requests(Base):
 

@@ -10,8 +10,12 @@ from selenium.webdriver.common.action_chains import ActionChains
 class VirtualIntelligence(Base):
     @property
     def submenus(self):
-        return {"report"    : VirtualIntelligence.Reports,
-                "chargeback"    : VirtualIntelligence.Chargeback,
+        return {"dashboard":  VirtualIntelligence.Dashboard,
+                "report":     VirtualIntelligence.Reports,
+                "usage":      VirtualIntelligence.Usage,
+                "chargeback": VirtualIntelligence.Chargeback,
+                "timeline":   VirtualIntelligence.Timeline,
+                "rss":        VirtualIntelligence.RSS
                 }
 
     class Reports(Base):
@@ -53,6 +57,15 @@ class VirtualIntelligence(Base):
             self.selenium.find_element(*self._reports_import_field).send_keys(import_reports_file)
             return self.click_on_upload()
 
+<<<<<<< HEAD
+=======
+    class Dashboard(Base):
+        _page_title = 'CloudForms Management Engine: Dashboard'
+
+    class Usage(Base):
+        _page_title = 'CloudForms Management Engine: VM Usage'
+
+>>>>>>> bug fixes to missing pages
     class Chargeback(Base):
         _page_title = 'CloudForms Management Engine: Chargeback'
 
@@ -61,6 +74,7 @@ class VirtualIntelligence(Base):
             from pages.regions.accordion import Accordion
             from pages.regions.treeaccordionitem import TreeAccordionItem
             return Accordion(self.testsetup, TreeAccordionItem)
+<<<<<<< HEAD
     
         def click_on_rates(self):
             self.accordion.accordion_by_name("Rates").click()
@@ -431,4 +445,12 @@ class VirtualIntelligence(Base):
             else:
                 return VirtualIntelligence.AddEditStorageChargeback(self.testsetup)
 
+=======
+
+    class Timelines(Base):
+        _page_title = 'CloudForms Management Engine: Timelines'
+
+    class RSS(Base):
+        _page_title = 'CloudForms Management Engine: RSS'
+>>>>>>> bug fixes to missing pages
 

@@ -195,7 +195,7 @@ class Automate(Base):
         _page_title = 'CloudForms Management Engine: Automate'
 
 
-    class Customization(Base):
+    class Customize(Base):
 
         _page_title = 'CloudForms Management Engine: Automate'
 

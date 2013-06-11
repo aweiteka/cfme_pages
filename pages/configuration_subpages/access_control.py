@@ -95,9 +95,11 @@ class AccessControl(Base):
                 parent = CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree)).find_node_by_name("Everything")
             else:
                 parent.twisty.expand()
-        
             rbac_node = RBAC_Node(name=parent.name, is_checked=parent.is_checked, is_checked_dim=parent.is_checked_dim, icon=parent.node_icon_img)
             if depth > 0:
+                # FIXME: 10-second delay here when len(parent.children) == 0
+                # hasattr(parent, 'children') check doesn't help
+                #print "Delay: Node=%s, depth=%d, children=%d" % (parent.name, depth, len(parent.children))
                 for child in parent.children:
                     rbac_node.children.append(self.traverse_rbac_tree(parent=child, depth=depth-1))
      
