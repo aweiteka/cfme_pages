@@ -37,11 +37,6 @@ class CheckboxTree(Tree):
         return "iconCheckGray" in self._checkbox_img
 
     @property
-    def children(self):
-        return [CheckboxTree(self.testsetup, web_element, self)
-                for web_element in self.root.find_elements(*self._sub_item_locator)]
-
-    @property
     def _checkbox(self):
         return self._root_element.find_element(*self._checkbox_locator)
 
