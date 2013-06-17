@@ -3,6 +3,7 @@ from pages.regions.checkboxtree import CheckboxTree
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from pages.regions.taggable import Taggable
+from selenium.webdriver.support.ui import WebDriverWait
 
 class AccessControl(Base):
     _page_title = 'CloudForms Management Engine: Configuration'
@@ -95,12 +96,11 @@ class AccessControl(Base):
                 parent = CheckboxTree(self.testsetup, self.selenium.find_element(*self._product_features_tree)).find_node_by_name("Everything")
             else:
                 parent.twisty.expand()
-            rbac_node = RBAC_Node(name=parent.name, is_checked=parent.is_checked, is_checked_dim=parent.is_checked_dim, icon=parent.node_icon_img)
+            rbac_node = RBAC_Node(parent)
             if depth > 0:
-                # FIXME: 10-second delay here when len(parent.children) == 0
-                # hasattr(parent, 'children') check doesn't help
-                #print "Delay: Node=%s, depth=%d, children=%d" % (parent.name, depth, len(parent.children))
                 for child in parent.children:
+                    # move selenium along when no children, avoid 10-sec delay
+                    self.selenium.implicitly_wait(0)
                     rbac_node.children.append(self.traverse_rbac_tree(parent=child, depth=depth-1))
      
             return rbac_node
@@ -218,10 +218,67 @@ class AccessControl(Base):
         def reset(self):
             return self.reset_tag_edits
 
-# helper class to traverse product features (RBAC) tree
+# helper class to build product features (RBAC) tree
 class RBAC_Node(object):
-    def __init__(self, *args, **kwargs):
-        self.children = list()
-        for k,v in kwargs.items():
-            setattr(self, k, v)
 
+    def __init__(self, node):
+        self.children = list()
+        self._node = node
+        self.name = self.translate_menu()
+        # TODO: make these properties
+        self.node_type = self.node_type()
+        self.is_accordion = self.is_accordion()
+        self.is_menu = self.is_menu()
+        self.is_enabled = self.is_enabled()
+
+    def translate_menu(self):
+        '''translate RBAC tree string into menu string
+        '''
+        # all depths
+        menu_map = {"Settings & Operations": "Configuration",
+                    "Catalogs Explorer": "Catalogs",
+                    # for submenus
+                    "Import/Export": "Import / Export",
+                    # for accordion
+                    "Import / Export": "Import/Export"}
+        return menu_map.get(self._node.name, self._node.name)
+
+
+    def node_type(self):
+        '''Return icon type: folder, view, operate, modify
+        '''
+        icon_map = {"feature_node.png": "node",
+                    "feature_view.png": "view",
+                    "feature_admin.png": "modify",
+                    "feature_control.png": "operate"}
+        _icon = self._node.node_icon_img
+        return icon_map.get(_icon[_icon.rfind("/")+1:])
+
+    def is_accordion(self):
+        '''Test if node is accordion based on icon image and list of exclusions
+        '''
+        # at depth - 2
+        not_accordion_items = ["All Services",
+                               "Accordions",
+                               "Template Access Rules",
+                               "VM Access Rules"
+                               ]
+        if self.node_type == "node":
+            if self._node.name not in not_accordion_items:
+                return True
+
+    def is_menu(self):
+        '''Filter out RBAC items that aren't represented as menus
+        '''
+        # at depth (storage) and depth-1 (buttons)
+        if self._node.name not in ["Storage", "Buttons"]:
+            return True
+
+    def is_enabled(self):
+        '''check if menu is checked or checked_dim
+        '''
+        # all depths
+        if self._node.is_checked or self._node.is_checked_dim:
+            return True
+
+    
