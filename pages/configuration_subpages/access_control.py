@@ -99,10 +99,7 @@ class AccessControl(Base):
             rbac_node = RBAC_Node(parent)
             if depth > 0:
                 for child in parent.children:
-                    # move selenium along when no children, avoid 10-sec delay
-                    self.selenium.implicitly_wait(0)
                     rbac_node.children.append(self.traverse_rbac_tree(parent=child, depth=depth-1))
-     
             return rbac_node
 
     # GROUPS
@@ -234,7 +231,6 @@ class RBAC_Node(object):
     def translate_menu(self):
         '''translate RBAC tree string into menu string
         '''
-        # all depths
         menu_map = {"Settings & Operations": "Configuration",
                     "Catalogs Explorer": "Catalogs",
                     # for submenus
@@ -257,11 +253,15 @@ class RBAC_Node(object):
     def is_accordion(self):
         '''Test if node is accordion based on icon image and list of exclusions
         '''
-        # at depth - 2
         not_accordion_items = ["All Services",
                                "Accordions",
                                "Template Access Rules",
-                               "VM Access Rules"
+                               "VM Access Rules",
+                               "Snapshots",
+                               "Host Conditions",
+                               "VM Conditions",
+                               "Compliance",
+                               "Control"
                                ]
         if self.node_type == "node":
             if self._node.name not in not_accordion_items:
@@ -270,15 +270,23 @@ class RBAC_Node(object):
     def is_menu(self):
         '''Filter out RBAC items that aren't represented as menus
         '''
-        # at depth (storage) and depth-1 (buttons)
         if self._node.name not in ["Storage", "Buttons"]:
             return True
 
     def is_enabled(self):
-        '''check if menu is checked or checked_dim
+        '''check if menu is enabled: checked, checked_dim or part of exception
         '''
-        # all depths
+        _control_explorer_accordions = ["Policy Profiles", 
+                                       "Policies", 
+                                       "Events", 
+                                       "Conditions", 
+                                       "Actions", 
+                                       "Alert Profiles", 
+                                       "Alerts"]
         if self._node.is_checked or self._node.is_checked_dim:
             return True
+        # hack for Control-Explorer accordion nodes that don't have checkbox
+        # TODO: "View All Records" sibling checkbox has state for these nodes
+        elif self._node.name in _control_explorer_accordions:
+            return True
 
-    
